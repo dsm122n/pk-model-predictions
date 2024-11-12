@@ -8,11 +8,42 @@ library(ggplot2)
 library(forcats)
 library(svglite)
 
+# Abbreviation and symbols:
+# •	V: Central compartment’svolume of distribution
+# •	V2: Second compartment’s volume of distribution
+# •	V3: Third compartment’s volume of distribution
+# •	CL: Clearance of elimination
+# •	Q or Q2: Inter-compartmental clearance between compartmentes 1 and 2
+# •	Q3: Inter-compartmental clearance between compartmentes 1 and 3
+# •	R: VECTOR containing infusion rates <-<-<-<-<-<-<-<-<-<-<-<- para input de función
+#   –	R [i]: infusion rate from tD[i-1] to t[i] <-<-<-<-<-<-<-<-<-<-<-<- para input de función
+# •	tD: VECTOR containing end time of infusions: <-<-<-<-<-<-<-<-<-<-<-<- para input de función
+#   –	tD[i]: time from beginning of simulation to end of infusion rate R[i] <-<-<-<-<-<-<-<-<-<-<-<- para input de función
+# •	td: time duration of fast infusion rate
+# •	A, B, C: first, second and third macroconstant
+# •	alpha, beta, gamma: first, second and third microconstants
+
+# Utilizar las siguientes unidades de medidas
+#•	mili mol (mmol) for quantities
+#•	hours (h) for time
+#•	kilograms (Kg) for mass
+
+
 
 trans <- function(x){
   x <- x/60
   return(x)
 }
+
+
+
+# Función para simulación de 1 compartimento, se utilizó para ASC. 
+# Si bien no es lo más correcto, en esta función se podrían poner los datos de análisis farmacocinético no compartimental del paper de resultados publicados
+# Esta es la que debería servir más
+# Para entender input, revisar comentarios de "#Abreviations and symbols". tD y R son vectores c(a_1,a_2,a_3,...a_n) con misma cantidad de elementos. Ver ejemplos del final para entender mejor
+# Si se usarán 2 velocidades de infusión y luego se cortará la infusión, 
+#  deberían ser 3 elementos donde a_1 es la primera infusión o el tiempo en **HORAS** del primer cambio (ej: 0.5 para 30 minutos)
+#  y a_n representa la última velocidad de infusión (señalar 0 si se deja de infundir el fco) y el tiempo de corte de la simulación en HORAS
 
 Simul1Comp <- function(V, CL, tD, R, Cph=0){
   
@@ -73,6 +104,7 @@ Simul1Comp <- function(V, CL, tD, R, Cph=0){
   return(Ct)
 }
 
+# estas funciones no tienen mucha utilidad, el input es la concentración en estado estable deseada y el output es la velocidad de infusión
 R1CompCssTd <- function(V, CL, Css, td, Cph=0){
   
   C0 <- Css - Cph
@@ -89,6 +121,7 @@ R1CompCssTd <- function(V, CL, Css, td, Cph=0){
   return(vel.infusions)
 }
 
+# Función para simulación de 2 compartimentos, se utilizó para DFO
 Simul2Comp <- function(V, V2, CL, Q, tD, R, Cph=0){
   
   tD0 <- c(0,tD) 
@@ -156,7 +189,7 @@ Simul2Comp <- function(V, V2, CL, Q, tD, R, Cph=0){
 }
 
 
-
+# estas funciones no tienen mucha utilidad, el input es la concentración en estado estable deseada y el output es la velocidad de infusión
 R2CompCssTd <- function(V, V2, CL, Q, Css, td, Cph=0){
   C0 <- Css - Cph
   Rss <- C0 * CL
@@ -178,6 +211,7 @@ R2CompCssTd <- function(V, V2, CL, Q, Css, td, Cph=0){
   return(vel.infusions.2)
 }
 
+# estas funciones no tienen mucha utilidad, el input es la concentración en estado estable deseada y el output es la velocidad de infusión
 R2CompCssTdSumCl <- function(V, V2, CL, Q, Css, td, Cph=0){
   C0 <- Css - Cph
 
@@ -196,6 +230,7 @@ R2CompCssTdSumCl <- function(V, V2, CL, Q, Css, td, Cph=0){
   return(vel.infusions.2)
 }
 
+# Función para simulación de 3 compartimentos, se utilizó para NAC
 Simul3Comp <- function(V1, V2, V3, CL, Q2, Q3, tD, R, Cph=0){
   tD0 <- c(0,tD)
   
@@ -276,7 +311,7 @@ Simul3Comp <- function(V1, V2, V3, CL, Q2, Q3, tD, R, Cph=0){
   return(Ct)
 }
 
-
+# estas funciones no tienen mucha utilidad, el input es la concentración en estado estable deseada y el output es la velocidad de infusión
 R3CompCssTd <- function(V1, V2, V3, CL, Q2, Q3, Css, td, Cph=0){
   C0 <- Css - Cph
   Rss <- C0 * CL
