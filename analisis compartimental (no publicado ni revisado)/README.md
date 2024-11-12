@@ -1,6 +1,6 @@
 # Análisis compartimental
 
-Análisis compartimental a manopla con algoritmo de levenberg marquardt.
+Análisis compartimental a manopla con algoritmo de levenberg marquardt de los datos medidos con HPLC
 
 Como es a manopla es más arcáico que el NONMEM, pero logra ajustar curvas con bastante exactitud. 
 
